@@ -1,6 +1,7 @@
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import $ from "jquery";
+require("dotenv").config();
 
 import { Button, Form } from "react-bootstrap";
 import { useState } from "react";
@@ -15,11 +16,9 @@ function App() {
   const handleOnSubmit = (e) => {
     e.preventDefault();
     let data = { name: nickname, pet: pet, color: color };
-    // console.log(data);
     setLoading(true);
-    const API_URL = "http://localhost:3001";
+    const API_URL = process.env.API_URL || "http://localhost:3001";
     $.post(API_URL, data, (res) => {
-      // console.log(res);
       setLoading(false);
       setMessage(res.message);
     });
