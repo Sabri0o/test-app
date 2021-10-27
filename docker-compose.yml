@@ -1,0 +1,43 @@
+version: "3.8"
+services:
+  postgres:
+    image: postgres
+    volumes:
+      - test-app-db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: database
+      POSTGRES_USER: user
+    networks:
+      - backend
+  server:
+    container_name: server
+    build: ./back-end
+    ports:
+      - "4001:3001"
+    environment:
+      HOST: postgres
+      USER: user
+      PASSWORD: secret
+      DB: database
+    depends_on:
+      - postgres
+    networks:
+      - backend
+      - frontend
+  client:
+    container_name: client
+    build: ./front-end
+    ports:
+      - "4000:3000"
+    depends_on:
+      - server
+    networks:
+      - frontend
+networks:
+  backend:
+    driver: bridge
+  frontend:
+    driver: bridge
+volumes:
+  test-app-db:

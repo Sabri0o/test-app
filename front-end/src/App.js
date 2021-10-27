@@ -3,7 +3,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import $ from "jquery";
 import { Button, Form } from "react-bootstrap";
 import { useState } from "react";
-// require("dotenv").config();
 
 function App() {
   const [nickname, setNickname] = useState();

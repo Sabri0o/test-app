@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-// const cors = require("cors");
+const cors = require("cors");
 const { sequelize } = require("./model/database");
 const { routes } = require("./routes/routes");
 require("dotenv").config();
@@ -11,12 +11,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // allow one origin to serve and block the rest
-// const corsOption = {
-//   origin: "http://localhost:3000",
-// };
+const corsOption = {
+  origin: "http://client:3000",
+};
 
 // cors middleware
-// app.use(cors(corsOption));
+app.use(cors(corsOption));
 
 sequelize
   .sync()
