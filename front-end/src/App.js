@@ -15,7 +15,7 @@ function App() {
     e.preventDefault();
     let data = { name: nickname, pet: pet, color: color };
     setLoading(true);
-    $.post('', data, (res) => {
+    $.post('/api', data, (res) => {
       setLoading(false);
       setMessage(res.message);
     });
