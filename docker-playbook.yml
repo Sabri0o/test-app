@@ -1,6 +1,7 @@
 - hosts: all
   become: true
   tasks:
+
     - name: Install aptitude
       apt: name=aptitude state=latest update_cache=yes force_apt_get=yes
 
@@ -32,67 +33,62 @@
     - name: Install Docker Module for Python
       pip:
         name: docker
+    
+    - name: Create network
+      docker_network:
+        name: test-app-net
 
+    - name: run Postgres container
+      docker_container:
+        name: postgres
+        state: started
+        restart_policy: always
+        image: postgres
+        pull: false
+        detach: yes
+        ports:
+          - "5432:5432"
+        volumes: 
+          - test-app-db:/var/lib/postgresql/data
+        env:
+            POSTGRES_PASSWORD: secret
+            POSTGRES_DB: database
+            POSTGRES_USER: user
+        networks:
+          - name: test-app-net
+
+
+    - name: run Server container
+      docker_container:
+        name: Server
+        state: started
+        image: "sabri0o/test-app_server:latest"
+        pull: true
+        ports:
+          - "5000:5000"
+        env:
+            HOST: postgres
+            USER: user
+            PASSWORD: secret
+            DB: database
+        networks:
+          - name: test-app-net
+
+    - name: run Client container
+      docker_container:
+        name: Client
+        state: started
+        image: "sabri0o/test-app_client:latest"
+        pull: true
+        ports:
+          - "8080:8080"
+        env:
+            EXPRESS_HOST: server
+        networks:
+          - name: test-app-net
+    
     - name: Start Docker service
       service:
         name: "docker"
         state: started
 
-    - name: Create network
-      docker_network:
-        name: backend
-        name: frontend
-    
-    - name: Create Postgres Container 
-      docker_container: 
-        name: postgres
-        image: postgres:latest
-        state: started
-        ports: 
-          - "5432:5432"
-        volumes: 
-          - test-app-db:/var/lib/postgresql/data
-        env:
-        	POSTGRES_PASSWORD: secret
-          POSTGRES_DB: database
-          POSTGRES_USER: user
-        networks:
-          - backend
-
-    - name: Build Server Image
-      docker_image:
-        path: /path/to/build/dir   # Will be the path to a directory containing the context and Dockerfile for building an image. 
-        name: back-end
-
-    - name: Build Client Image
-      docker_image:
-        path: /path/to/build/dir   # Will be the path to a directory containing the context and Dockerfile for building an image. 
-        name: front-end
-    
-    - name: Create Server Container 
-      docker_container: 
-        name: server
-        image: back-end
-        ports: 
-          - "5000:5000"
-        env:
-        	HOST: postgres
-          USER: user
-          PASSWORD: secret
-          DB: database
-        networks:
-          - backend
-          - frontend
-
-    - name: Create Client Container 
-      docker_container: 
-        name: server
-        image: front-end
-        ports: 
-          - "8080:8080"
-        env:
-        	EXPRESS_HOST: server
-        networks:
-          - frontend
-        
-        
