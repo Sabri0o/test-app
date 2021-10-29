@@ -35,7 +35,7 @@ Now navigate to your browser, enter `http://your-remote-host-ip:8080`. You shoul
   
 **Ps:** Make sure that the port 8080 on the remote nodes is opened.<br>
   
-**Ps:** If you don't possess an instance on the cloud you can also try testing deploying the web application locally by changing `all` to `localhost` in the _**docker-playbook.yml**_ file.
+**Ps:** If you don't possess an instance on the cloud you can also try testing deploying the web application locally by changing `all` to `localhost` and removing the preparation tasks in the _**docker-playbook.yml**_ file.
 
 
 
